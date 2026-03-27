@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eyosafit Eliyas | Multi-Disciplinary Developer & Editor</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* Dynamic Theme Variables - Default Blue */
+            --hue: 220;
+            --primary: hsl(var(--hue), 100%, 60%);
+            --primary-glow: hsla(var(--hue), 100%, 60%, 0.3);
+            --primary-light: hsl(var(--hue), 100%, 75%);
+            
+            /* Dark Theme Colors */
+            --bg-base: #050505;
+            --bg-surface: rgba(20, 20, 25, 0.7);
+            --bg-surface-hover: rgba(30, 30, 40, 0.8);
+            --text-main: #ffffff;
+            --text-muted: #a0a0ab;
+            --border: rgba(255, 255, 255, 0.08);
+            --nav-blur: blur(16px);
+            --grid-color: rgba(255, 255, 255, 0.03);
+        }
+
+        [data-theme="light"] {
+            --bg-base: #f8f9fa;
+            --bg-surface: rgba(255, 255, 255, 0.8);
+            --bg-surface-hover: rgba(255, 255, 255, 0.95);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: rgba(0, 0, 0, 0.1);
+            --grid-color: rgba(0, 0, 0, 0.03);
+            --primary-glow: hsla(var(--hue), 100%, 60%, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            overflow-x: hidden;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* Animated Grid Background */
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: 
+                linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -2;
+            transition: all 0.5s ease;
+        }
+
+        /* Dynamic Background Glow */
+        .bg-glow {
+            position: fixed;
+            top: 50%; left: 50%;
+            width: 60vw; height: 60vw;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            filter: blur(80px);
+            transition: background 1s ease, top 0.5s ease;
+            pointer-events: none;
+        }
+
+        /* Typography */
+        h1, h2, h3 { font-weight: 800; line-height: 1.1; }
+        
+        .gradient-text {
+            background: linear-gradient(to right, var(--text-main), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: all 0.5s ease;
+        }
+
+        .mono { font-family: 'Fira Code', monospace; font-size: 0.9rem; }
+
+        /* Layout Container */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 120px 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Navigation */
+        header {
+            position: fixed;
+            top: 0; width: 100%;
+            z-index: 1000;
+            background: rgba(var(--bg-base), 0.5);
+            backdrop-filter: var(--nav-blur);
+            -webkit-backdrop-filter: var(--nav-blur);
+            border-bottom: 1px solid var(--border);
+            transition: 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-decoration: none;
+            color: var(--text-main);
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-dot {
+            width: 12px; height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--primary);
+            transition: background 0.5s ease;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 1rem;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--text-main);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px; left: 0;
+            width: 0; height: 2px;
+            background: var(--primary);
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+        /* Controls */
+        .controls { display: flex; gap: 1rem; align-items: center; }
+        
+        .icon-btn {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 45px; height: 45px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            font-size: 1.2rem;
+            transition: 0.3s;
+        }
+
+        .icon-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary-light);
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .hero-content h1 {
+            font-size: clamp(3rem, 6vw, 5rem);
+            margin-bottom: 1.5rem;
+            letter-spacing: -2px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            max-width: 90%;
+            line-height: 1.8;
+        }
+
+        /* Profile Image Container */
+        .profile-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            aspect-ratio: 1;
+            margin: auto;
+            perspective: 1000px;
+        }
+
+        .profile-wrapper {
+            width: 100%;
+            height: 100%;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; /* Organic Blob Shape */
+            padding: 8px;
+            background: linear-gradient(45deg, var(--primary), transparent, var(--primary));
+            animation: blobShape 8s ease-in-out infinite alternate;
+            box-shadow: 0 0 40px var(--primary-glow);
+            transition: transform 0.1s ease-out;
+            transform-style: preserve-3d;
+        }
+
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+            object-fit: cover;
+            background-color: var(--bg-surface);
+            border: 4px solid var(--bg-base);
+        }
+
+        @keyframes blobShape {
+            0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+            50% { border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%; }
+            100% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
+        }
+
+        /* Contact Tags */
+        .contact-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .contact-tag {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .contact-tag:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px var(--primary-glow);
+        }
+
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-header h2 { font-size: 3rem; margin-bottom: 1rem; }
+        .section-header p { color: var(--text-muted); font-size: 1.2rem; }
+
+        /* Card System (Glassmorphism + Neon) */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: 0.4s;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Glow effect on hover */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--primary-glow), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .card:hover::before { opacity: 1; }
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .card > * { position: relative; z-index: 1; }
+
+        /* Video Section */
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            background: #000;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border: 0;
+        }
+
+        .card h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .card p { color: var(--text-muted); margin-bottom: 1.5rem; }
+
+        /* Tech Badges */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tech-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--primary-light);
+            transition: 0.3s;
+        }
+        
+        .card:hover .tech-badge { border-color: var(--primary-glow); }
+
+        /* Skills Grid */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .skill-box {
+            padding: 2rem;
+            border-radius: 20px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .skill-box i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            transition: 0.3s;
+        }
+
+        .skill-box:hover {
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+        .skill-box:hover i { transform: scale(1.2) rotate(5deg); }
+
+        /* Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Mobile Responsive */
+        @media (max-width: 992px) {
+            .hero-grid { grid-template-columns: 1fr; text-align: center; gap: 2rem; }
+            .hero-badge { margin: 0 auto 1.5rem auto; }
+            .hero-subtitle { margin: 0 auto 2.5rem auto; }
+            .contact-tags { justify-content: center; }
+            .profile-container { max-width: 350px; grid-row: 1; margin-bottom: 2rem;}
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .section-header h2 { font-size: 2.5rem; }
+            .section { padding: 100px 0 60px 0; }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <!-- Ambient Background Elements -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow" id="bg-glow"></div>
+
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#home" class="logo">
+                    <div class="logo-dot"></div>
+                    EYOSAFIT
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#home" class="active">Home</a></li>
+                    <li><a href="#video">Video</a></li>
+                    <li><a href="#game">Game Dev</a></li>
+                    <li><a href="#web">Web/Mobile</a></li>
+                    <li><a href="#skills">Skills</a></li>
+                </ul>
+                <div class="controls">
+                    <a href="https://t.me/eyosafit" target="_blank" class="icon-btn" title="Telegram"><i class="fab fa-telegram-plane"></i></a>
+                    <button class="icon-btn" id="theme-btn" title="Toggle Theme">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="section container">
+            <div class="hero-grid">
+                <div class="hero-content reveal">
+                    <div class="hero-badge">
+                        <i class="fas fa-code"></i> Developer & <i class="fas fa-film"></i> Editor
+                    </div>
+                    <h1>Hi, I'm <br><span class="gradient-text">Eyosafit Eliyas</span></h1>
+                    <p class="hero-subtitle">
+                        I bridge the gap between imagination and reality. From engineering scalable full-stack web apps and cross-platform mobile tools to building immersive 3D games and crafting high-retention cinematic videos.
+                    </p>
+                    
+                    <div class="contact-tags">
+                        <a href="mailto:eyosafit90@gmail.com" class="contact-tag">
+                            <i class="fas fa-envelope"></i> eyosafit90@gmail.com
+                        </a>
+                        <a href="tel:+251942594301" class="contact-tag">
+                            <i class="fas fa-phone"></i> +251 942 594 301
+                        </a>
+                        <div class="contact-tag" style="cursor: default;">
+                            <i class="fas fa-location-dot"></i> Arba Minch Univ, ET
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3D Profile Image Container -->
+                <div class="profile-container reveal" id="profile-container">
+                    <div class="profile-wrapper">
+                        <!-- Replace src with your actual image URL -->
+                        <img src="https://images.unsplash.com/photo-1531297172867-4b1c69a36931?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Eyosafit Eliyas" class="profile-img">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Video Editing Section -->
+        <section id="video" class="section container" data-hue="0"> <!-- 0 = Red/Crimson -->
+            <div class="section-header reveal">
+                <p class="mono">01. Creative Vision</p>
+                <h2><span class="gradient-text">Video Editing</span></h2>
+                <p>High-impact visual storytelling, cinematic trailers, and YouTube content.</p>
+            </div>
+            
+            <div class="grid-layout">
+                <div class="card reveal">
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?controls=0" allowfullscreen></iframe>
+                    </div>
+                    <h3>Cinematic Brand Trailer</h3>
+                    <p>Advanced color grading, dynamic sound design, and narrative-driven pacing to captivate audiences.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Premiere Pro</span>
+                        <span class="tech-badge">Color Grading</span>
+                        <span class="tech-badge">Sound Design</span>
+                    </div>
+                </div>
+                
+                <div class="card reveal" style="transition-delay: 0.1s;">
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/jNQXAC9IVRw" allowfullscreen></iframe>
+                    </div>
+                    <h3>YouTube Content Strategy</h3>
+                    <p>High-retention editing techniques, visual hooks, and fast-paced motion graphics tailored for algorithms.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">After Effects</span>
+                        <span class="tech-badge">Motion Graphics</span>
+                        <span class="tech-badge">Retention Editing</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Game Development Section -->
+        <section id="game" class="section container" data-hue="35"> <!-- 35 = Amber/Orange -->
+            <div class="section-header reveal">
+                <p class="mono">02. Interactive Worlds</p>
+                <h2><span class="gradient-text">Game Development</span></h2>
+                <p>Architecting 2D & 3D experiences and real-time multiplayer ecosystems.</p>
+            </div>
+
+            <div class="grid-layout">
+                <div class="card reveal">
+                    <i class="fas fa-globe card-icon" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h3>Online Multiplayer Arena</h3>
+                    <p>A browser-based multiplayer game leveraging WebSockets for real-time synchronization and low-latency gameplay.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Three.js</span>
+                        <span class="tech-badge">Django</span>
+                        <span class="tech-badge">WebSockets</span>
+                    </div>
+                </div>
+                
+                <div class="card reveal" style="transition-delay: 0.1s;">
+                    <i class="fas fa-cube card-icon" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h3>3D Adventure Engine</h3>
+                    <p>Complex 3D physics, custom shaders, and environmental lighting built inside Godot 4 for immersive exploration.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Godot 4</span>
+                        <span class="tech-badge">GDScript</span>
+                        <span class="tech-badge">Blender</span>
+                    </div>
+                </div>
+
+                <div class="card reveal" style="transition-delay: 0.2s;">
+                    <i class="fas fa-gamepad card-icon" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h3>Retro 2D Platformer</h3>
+                    <p>Tight character controllers, pixel-perfect collision detection, and custom level design architecture.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Godot Engine</span>
+                        <span class="tech-badge">C#</span>
+                        <span class="tech-badge">2D Physics</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Web & Mobile Section -->
+        <section id="web" class="section container" data-hue="150"> <!-- 150 = Emerald/Green -->
+            <div class="section-header reveal">
+                <p class="mono">03. Scalable Solutions</p>
+                <h2><span class="gradient-text">Web & Mobile Apps</span></h2>
+                <p>Full-stack architectures and high-performance cross-platform mobile tools.</p>
+            </div>
+
+            <div class="grid-layout">
+                <div class="card reveal">
+                    <i class="fab fa-python card-icon" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h3>Kivy Mobile App</h3>
+                    <p>A cross-platform (Android/iOS) utility application utilizing KivyMD for material design UI and native performance.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Python</span>
+                        <span class="tech-badge">Kivy</span>
+                        <span class="tech-badge">KivyMD</span>
+                    </div>
+                </div>
+                
+                <div class="card reveal" style="transition-delay: 0.1s;">
+                    <i class="fas fa-server card-icon" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h3>Robust REST APIs</h3>
+                    <p>Secure, scalable backend services and databases managed through Django ORM and Flask blueprints.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Django</span>
+                        <span class="tech-badge">Flask</span>
+                        <span class="tech-badge">SQL</span>
+                    </div>
+                </div>
+
+                <div class="card reveal" style="transition-delay: 0.2s;">
+                    <i class="fas fa-laptop-code card-icon" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h3>Dynamic Frontends</h3>
+                    <p>Responsive, accessible, and highly interactive user interfaces built from the ground up.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">HTML/CSS/JS</span>
+                        <span class="tech-badge">Tailwind</span>
+                        <span class="tech-badge">DOM Manipulation</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="section container" data-hue="220"> <!-- 220 = Default Blue -->
+            <div class="section-header reveal">
+                <p class="mono">04. The Arsenal</p>
+                <h2><span class="gradient-text">Technical Expertise</span></h2>
+            </div>
+            
+            <div class="skills-grid">
+                <div class="skill-box reveal">
+                    <i class="fab fa-python"></i>
+                    <h3>Core Logic</h3>
+                    <p class="mono" style="color: var(--text-muted); margin-top: 10px;">Python • JS • C# • SQL</p>
+                </div>
+                <div class="skill-box reveal" style="transition-delay: 0.1s;">
+                    <i class="fas fa-layer-group"></i>
+                    <h3>Frameworks</h3>
+                    <p class="mono" style="color: var(--text-muted); margin-top: 10px;">Django • Flask • Kivy</p>
+                </div>
+                <div class="skill-box reveal" style="transition-delay: 0.2s;">
+                    <i class="fas fa-cube"></i>
+                    <h3>Game Tech</h3>
+                    <p class="mono" style="color: var(--text-muted); margin-top: 10px;">Godot • Three.js • GDScript</p>
+                </div>
+                <div class="skill-box reveal" style="transition-delay: 0.3s;">
+                    <i class="fas fa-film"></i>
+                    <h3>Post-Production</h3>
+                    <p class="mono" style="color: var(--text-muted); margin-top: 10px;">Premiere • After Effects</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer style="text-align: center; padding: 2rem; border-top: 1px solid var(--border); margin-top: 4rem;">
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Designed & Developed by Eyosafit Eliyas &copy; 2024
+        </p>
+    </footer>
+
+    <script>
+        // --- Dark/Light Mode Toggle ---
+        const themeBtn = document.getElementById('theme-btn');
+        const body = document.body;
+
+        themeBtn.addEventListener('click', () => {
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            themeBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        });
+
+        // --- Context-Aware Hue Engine (Changes Accent Color on Scroll) ---
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-links a');
+        const root = document.documentElement;
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Update Accent Color based on section's data-hue attribute
+                    const hue = entry.target.getAttribute('data-hue') || '220';
+                    root.style.setProperty('--hue', hue);
+                    
+                    // Update Active Nav Link
+                    const id = entry.target.getAttribute('id');
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${id}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.3 }); // Triggers when 30% of section is visible
+
+        sections.forEach(section => observer.observe(section));
+
+        // --- Reveal Animations on Scroll ---
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    revealObserver.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // --- 3D Tilt Effect on Profile Image ---
+        const profileContainer = document.getElementById('profile-container');
+        const profileWrapper = document.querySelector('.profile-wrapper');
+
+        profileContainer.addEventListener('mousemove', (e) => {
+            const rect = profileContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left; // x position within the element
+            const y = e.clientY - rect.top;  // y position within the element
+            
+            // Calculate rotation (max 15 degrees)
+            const xRotation = ((y - rect.height / 2) / rect.height) * -30;
+            const yRotation = ((x - rect.width / 2) / rect.width) * 30;
+            
+            profileWrapper.style.transform = `rotateX(${xRotation}deg) rotateY(${yRotation}deg)`;
+        });
+
+        profileContainer.addEventListener('mouseleave', () => {
+            // Reset rotation on mouse leave
+            profileWrapper.style.transform = `rotateX(0deg) rotateY(0deg)`;
+        });
+
+        // --- Mouse Glow Effect on Cards ---
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+
+        // --- Background Glow follows scroll slightly ---
+        const bgGlow = document.getElementById('bg-glow');
+        window.addEventListener('scroll', () => {
+            const scrollPercent = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+            bgGlow.style.top = `${30 + (scrollPercent * 40)}%`; 
+        });
+    </script>
+</body>
+</html>
